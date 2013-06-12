@@ -18,3 +18,13 @@ http://turtlescripts.com/file/gjdh17 makesphere
 http://turtlescripts.com/project/gjdh09-build build
 http://turtlescripts.com/project/gjdgyt-Measure-Distance-3-0 measure
 http://turtlescripts.com/project/gjdh10-FeatherMiner
+
+
+http://www.minecraftwiki.net/wiki/Mining#layout_4
+
+http://computercraft.info/wiki/Turtle_(API)
+http://turtlescripts.com/project/gjdhcs-9by9
+
+
+OSs
+http://turtlescripts.com/project/gjdh91-GrimOS-Installer
