@@ -13,3 +13,7 @@ http://www.computercraft.info/forums2/index.php?/topic/11990-video-andy-logger-d
 http://pastebin.com/nGrkBx4H
 
 http://turtlescripts.com/file/gjdh4o gps-delpoy
+
+http://turtlescripts.com/file/gjdh17 makesphere
+http://turtlescripts.com/project/gjdh09-build build
+http://turtlescripts.com/project/gjdgyt-Measure-Distance-3-0 measure
