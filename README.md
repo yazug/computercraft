@@ -25,6 +25,8 @@ http://www.minecraftwiki.net/wiki/Mining#layout_4
 http://computercraft.info/wiki/Turtle_(API)
 http://turtlescripts.com/project/gjdhcs-9by9
 http://turtlescripts.com/project/gjdgyq-Obsidian-Mining-
+http://turtlescripts.com/project/gjdgz9-Turtle-Enhanced-go-Script-do-
+http://turtlescripts.com/file/gjdh0b ezbore
 
 
 OSs
