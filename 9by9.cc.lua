@@ -91,7 +91,7 @@ function forward()
     while not turtle.forward() do
         while turtle.getFuelLevel() == 0 do
             turtle.select(fuel_slot)
-            if not refuel() then
+            if not turtle.refuel(1) then
                 print("Need Fuel to move... Please add fuel to slot " .. fuel_slot )
                 sleep(5)
             end
@@ -103,7 +103,7 @@ function forward()
             turtle.attack()
             sleep(forward_sleep_time)
             print("Blocked from going forward")
-        end
+	    end
     end
 end
 
@@ -214,42 +214,6 @@ function goUp(count)
     end
 end
 
-
--- From Excavate2
-function refuel( ammount )
-	local fuelLevel = turtle.getFuelLevel()
-	if fuelLevel == "unlimited" then
-		return true
-	end
-	
-	local needed = ammount 
-	if turtle.getFuelLevel() < needed then
-		local fueled = false
-		for n=1,16 do
-			if turtle.getItemCount(n) > 0 then
-				turtle.select(n)
-				if turtle.refuel(1) then
-					while turtle.getItemCount(n) > 0 and turtle.getFuelLevel() < needed do
-						turtle.refuel(1)
-					end
-					if turtle.getFuelLevel() >= needed then
-						turtle.select(1)
-						return true
-					end
-				end
-			end
-		end
-		turtle.select(1)
-		return false
-	end
-	
-	return true
-end
-
-
-
-
--- Actual main function
 if isRunning then
 
     print("Place 4 stacks of wall building materials into slot " .. wall_slot .. " and others")
@@ -291,10 +255,7 @@ if isRunning then
             sleep(1)
         end
     end
-	print("Fuel Level: ["..turtle.getFuelLevel() .. "] ")
-    print("Starting Floor Pass")
-	
--- Begin Floor	
+    print("Starting")
     turtle.turnLeft()
     doFloor()
     doCorner(4,doWall)
@@ -332,12 +293,10 @@ if isRunning then
 
     nextLoop()
 
+
     dig()
     
     placeDown(floor_slot)
--- end floor
-
-
     
     goUp(1)
     turtle.select(torch_slot)
@@ -351,11 +310,7 @@ if isRunning then
     forward()
     turtle.turnLeft()
     turtle.turnLeft()
-
-	print("Fuel Level: ["..turtle.getFuelLevel() .. "] ")
-    print("Starting Wall Pass")
-
--- begin Wall pass 1    
+    
     turtle.turnLeft()
     doAir()
     doCorner(4,doWall)
@@ -395,14 +350,9 @@ if isRunning then
 
     nextLoop()
     dig()
--- end wall pass 1
-
     
     goUp(3)
-
-	print("Fuel Level: ["..turtle.getFuelLevel() .. "] ")
-    print("Starting Ceiling pass")
--- Begin Ceiling    
+    
     turtle.turnLeft()
     doCeiling()
     turtle.turnRight()
@@ -447,9 +397,7 @@ if isRunning then
     doCorner(4,doCeiling)
     doCeiling()
     doCorner(4,doCeiling)
--- end ceiling
-
--- return to original position    
+    
     turtle.turnLeft()
     forward()
     turtle.turnRight()
@@ -462,7 +410,4 @@ if isRunning then
     turtle.down()
     turtle.down()
     turtle.forward()
-
-	print("Fuel Level: ["..turtle.getFuelLevel() .. "] ")
-
 end
