@@ -217,7 +217,7 @@ end
 
 -- From Excavate2
 function refuel( ammount )
-  local fuelLevel = turtle.getFuelLevel()
+	local fuelLevel = turtle.getFuelLevel()
 	if fuelLevel == "unlimited" then
 		return true
 	end
@@ -292,7 +292,7 @@ if isRunning then
         end
     end
 	print("Fuel Level: ["..turtle.getFuelLevel() .. "] ")
-    print("Starting")
+    print("Starting Floor Pass")
 	
 -- Begin Floor	
     turtle.turnLeft()
@@ -352,6 +352,9 @@ if isRunning then
     turtle.turnLeft()
     turtle.turnLeft()
 
+	print("Fuel Level: ["..turtle.getFuelLevel() .. "] ")
+    print("Starting Wall Pass")
+
 -- begin Wall pass 1    
     turtle.turnLeft()
     doAir()
@@ -397,6 +400,8 @@ if isRunning then
     
     goUp(3)
 
+	print("Fuel Level: ["..turtle.getFuelLevel() .. "] ")
+    print("Starting Ceiling pass")
 -- Begin Ceiling    
     turtle.turnLeft()
     doCeiling()
