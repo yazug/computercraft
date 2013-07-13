@@ -5,7 +5,7 @@ local support_slot = 3
 local junk_slot = 3
 
 function refill(slot)
-    for i=1,16 do
+	for i=1,16 do
 		turtle.select(i)
 		if i ~= wall_slot and i ~= stair_slot and i ~= support_slot then
 			if turtle.compareTo(slot) then
@@ -71,7 +71,22 @@ function resupply()
 	end
 end
 
-for h=1,9 do
+for h=1,18 do
+
+	turtle.select(junk_slot)
+	turtle.dig()
+	turtle.forward()
+	turtle.turnLeft()
+	turtle.dig()
+	turtle.select(support_slot)
+	turtle.place()
+	turtle.turnRight()
+	turtle.turnRight()
+	turtle.place()
+	turtle.turnLeft()
+	turtle.placeUp()
+	turtle.back()
+	turtle.select(wall_slot)
 	for k=1,4 do
 		for i=1,3 do
 			resupply()
@@ -84,8 +99,8 @@ for h=1,9 do
 				turtle.turnLeft()
 				turtle.select(support_slot)
 				turtle.place()
-				turtle.turnLeft()
-				turtle.turnLeft()
+				turtle.turnRight()
+				turtle.turnRight()
 			end
 
 			if False then
@@ -128,16 +143,12 @@ for h=1,9 do
 		turtle.place()
 		turtle.turnLeft()
 	end
-	turtle.forward()
-	turtle.turnLeft()
-	turtle.select(junk_slot)
-	turtle.dig()
-	turtle.select(support_slot)
-	turtle.place()
-	turtle.select(wall_slot)
-	turtle.turnRight()
-	turtle.back()
+
 	turtle.select(junk_slot)
 	turtle.digUp()
 	turtle.up()
 end
+turtle.down()
+turtle.select(support_slot)
+turtle.placeUp()
+turtle.select(wall_slot)
