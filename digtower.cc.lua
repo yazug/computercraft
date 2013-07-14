@@ -21,6 +21,7 @@ local wall_slot = 1
 local stair_slot = 2
 local support_slot = 3
 local junk_slot = 3
+local build_height = 8
 
 function refill(slot)
 	for i=1,16 do
@@ -89,7 +90,7 @@ function resupply()
 	end
 end
 
-for h=1,16 do
+for h=1,build_height do
 
 	turtle.select(junk_slot)
 	turtle.dig()
