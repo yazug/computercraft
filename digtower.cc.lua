@@ -13,10 +13,12 @@
 -- author: jon.schlueter@gmail.com (yazug)
 -- 2013-07-14
 --
--- version 1.0
+-- version 1.1
 --
+-- Reworked total logic for digging/building tower and placing steps
+--
+-- TODO: Still has problems with gravel falling through when digging out the ceiling
 
-local spiral = 0
 local wall_slot = 1
 local stair_slot = 2
 local support_slot = 3
@@ -24,10 +26,16 @@ local junk_slot = 3
 local build_height = 8
 
 function refill(slot)
-	for i=1,16 do
-		turtle.select(i)
-		if i ~= wall_slot and i ~= stair_slot and i ~= support_slot then
-			if turtle.compareTo(slot) then
+	if turtle.getItemCount(slot) > 0
+	then
+		for i=1,16 do
+			turtle.select(i)
+			if
+				i ~= wall_slot and
+				i ~= stair_slot and
+				i ~= support_slot and
+				turtle.compareTo(slot)
+			then
 				turtle.transferTo(slot)
 			end
 		end
@@ -35,9 +43,9 @@ function refill(slot)
 end
 
 function resupply()
-	local need_wall = turtle.getItemCount(wall_slot) < 32
-	local need_stair = turtle.getItemCount(stair_slot) < 32
-	local need_support = turtle.getItemCount(support_slot) < 32
+	local need_wall = turtle.getItemCount(wall_slot) < 24
+	local need_stair = turtle.getItemCount(stair_slot) < build_height + 1
+	local need_support = turtle.getItemCount(support_slot) < 25
 	if need_wall and turtle.getItemCount(wall_slot) > 0 then
 		print("Attempting refill of Wall")
 		refill(wall_slot)
@@ -74,10 +82,9 @@ function resupply()
 		end
 		sleep(5)
 
-
-		need_wall = turtle.getItemCount(wall_slot) < 32
-		need_stair = turtle.getItemCount(stair_slot) < 32
-		need_support = turtle.getItemCount(support_slot) < 32
+		need_wall = turtle.getItemCount(wall_slot) < 24
+		need_stair = turtle.getItemCount(stair_slot) < build_height + 1
+		need_support = turtle.getItemCount(support_slot) < 25
 		if need_wall and turtle.getItemCount(wall_slot) > 0 then
 			refill(wall_slot)
 		end
@@ -90,85 +97,121 @@ function resupply()
 	end
 end
 
-for h=1,build_height do
+function doPlace(slot)
+	turtle.select(slot)
+	return turtle.place(slot)
+end
 
-	turtle.select(junk_slot)
-	turtle.dig()
-	turtle.forward()
-	turtle.turnLeft()
-	turtle.dig()
-	turtle.select(support_slot)
-	turtle.place()
-	turtle.turnRight()
-	turtle.turnRight()
-	turtle.place()
-	turtle.turnLeft()
-	turtle.placeUp()
-	turtle.back()
-	turtle.select(wall_slot)
-	for k=1,4 do
-		for i=1,3 do
-			resupply()
-			turtle.select(junk_slot)
-			turtle.digUp()
-			turtle.select(support_slot)
-			turtle.placeUp()
-			if k == 1 and i == 1 then
-				turtle.turnLeft()
-				turtle.turnLeft()
-				turtle.select(support_slot)
-				turtle.place()
-				turtle.turnRight()
-				turtle.turnRight()
-			end
-
-			if False then
-				print("check stairs "..k.." "..i.." "..spiral.." ["..(k-1)*3+(i-1).."]")
-			end
-			if ((k-1)*3)+(i-1) == spiral%12 then
-				turtle.select(stair_slot)
-				turtle.placeDown()
-
-				if spiral%3 == 1 then
-					spiral = spiral-1;
-					print("Skipping corner")
-				end
-				if spiral > 0 then
-					spiral = spiral-1;
-				else
-					spiral = 11
-				end
-				print("Placed stair next at ".. spiral)
-			end
-
-			turtle.turnRight()
-			turtle.select(junk_slot)
-			turtle.dig()
-			turtle.select(wall_slot)
-			turtle.place()
-			turtle.turnLeft()
-			turtle.select(junk_slot)
-			turtle.dig()
-			turtle.forward()
-		end
-		turtle.turnRight()
+function doPlaceUp(slot)
+	turtle.select(slot)
+	return turtle.placeUp(slot)
+end
+function doPlaceDown(slot)
+	turtle.select(slot)
+	return turtle.placeDown()
+end
+function safePlaceUp(slot)
+	turtle.select(slot)
+	while not turtle.compareUp() and not turtle.placeUp(slot) do
+		turtle.select(junk_slot)
+		turtle.digUp()
+		turtle.select(slot)
+	end
+end
+function goForward()
+	while not turtle.forward() do
 		turtle.select(junk_slot)
 		turtle.dig()
-		turtle.select(wall_slot)
-		turtle.place()
-		turtle.turnLeft()
-		turtle.back()
-		turtle.select(wall_slot)
-		turtle.place()
+	end
+end
+function goForwardSafe()
+	safePlaceUp(support_slot)
+	goForward()
+	safePlaceUp(support_slot)
+end
+
+function goUpSafe()
+	while not turtle.up() do
+		turtle.select(junk_slot)
+		turtle.digUp()
+	end
+	doPlaceUp(support_slot)
+	for i=1,4 do
+		doPlace(support_slot)
 		turtle.turnLeft()
 	end
-
-	turtle.select(junk_slot)
-	turtle.digUp()
-	turtle.up()
 end
-turtle.down()
-turtle.select(support_slot)
-turtle.placeUp()
-turtle.select(wall_slot)
+
+function doPlaceWall(slot)
+	turtle.select(slot)
+	while not turtle.compare() and not turtle.place() do
+		turtle.select(junk_slot)
+		turtle.dig()
+		turtle.select(slot)
+	end
+end
+
+function doPlaceCorner(slot)
+	turtle.turnRight()
+	goForwardSafe()
+	turtle.turnLeft()
+	doPlaceWall(slot)
+	turtle.turnRight()
+	turtle.back()
+	doPlaceWall(slot)
+	turtle.turnLeft()
+	doPlaceWall(slot)
+end
+
+function newFloor(floor_place)
+	goForwardSafe()
+	doPlaceWall(wall_slot)
+	turtle.turnLeft()
+	if floor_place%8 == 0 then doPlaceDown(stair_slot) end
+	goForwardSafe()
+	doPlaceCorner(wall_slot)
+	turtle.turnLeft()
+	if floor_place%8 == 7 then doPlaceDown(stair_slot) end
+	goForwardSafe()
+	turtle.turnRight()
+	doPlaceWall(wall_slot)
+	turtle.turnLeft()
+	if floor_place % 8 == 6 then doPlaceDown(stair_slot) end
+	goForwardSafe()
+	doPlaceCorner(wall_slot)
+	turtle.turnLeft()
+	if floor_place % 8 == 5 then doPlaceDown(stair_slot) end
+	goForwardSafe()
+	turtle.turnRight()
+	doPlaceWall(wall_slot)
+	turtle.turnLeft()
+	if floor_place % 8 == 4 then doPlaceDown(stair_slot) end
+	goForwardSafe()
+	doPlaceCorner(wall_slot)
+	turtle.turnLeft()
+	if floor_place % 8 == 3 then doPlaceDown(stair_slot) end
+	goForwardSafe()
+	turtle.turnRight()
+	doPlaceWall(wall_slot)
+	turtle.turnLeft()
+	if floor_place % 8 == 2 then doPlaceDown(stair_slot) end
+	goForwardSafe()
+	doPlaceCorner(wall_slot)
+	turtle.turnLeft()
+	if floor_place % 8 == 1 then doPlaceDown(stair_slot) end
+	goForwardSafe()
+	turtle.turnLeft()
+	goForwardSafe()
+	turtle.turnLeft()
+	turtle.turnLeft()
+end
+
+resupply()
+newFloor(0)
+for i=1,build_height do
+	resupply()
+	goUpSafe()
+	doPlaceDown(support_slot)
+	newFloor(i)
+end
 
