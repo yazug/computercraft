@@ -18,6 +18,9 @@
 -- Reworked total logic for digging/building tower and placing steps
 --
 -- TODO: Still has problems with gravel falling through when digging out the ceiling
+--
+-- to get from the market (turtlescripts.com)
+-- market get gjdhko digtower y
 
 local wall_slot = 1
 local stair_slot = 2
