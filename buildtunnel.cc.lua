@@ -6,12 +6,13 @@
 -- it will build tunnel_len long tunnel at a time.
 --
 -- Jon.schlueter@gmail.com
+-- version 1.0 2013-07-13
 
 local tunnel_len = 8
 local build_slot = 1
-local window_slot = 2
-local junk_slot = 3
-local fuel_slot = 4
+local window_slot = 3
+local junk_slot = 4
+local fuel_slot = 16
 function checkRefuel()
    while turtle.getFuelLevel() == 0 do
        turtle.select(fuel_slot)
@@ -94,11 +95,11 @@ function buildonev2()
     goDown()
     place(window_slot)
     goDown()
+    placeDown(build_slot)
     goForward()
     placeDown(build_slot)
     goBack()
     place(build_slot)
-    placeDown(build_slot)
     goBack()
     placeDown(build_slot)
     turtle.turnLeft()
@@ -122,8 +123,12 @@ function resupply(slot,count)
     return turtle.getItemCount(slot) >= count
 end
  
+print("Solid in slot "..build_slot)
+print("Window stuff in slot "..window_slot)
+print("Fuel in slot "..fuel_slot)
+
 for len = 1,tunnel_len do
-    while not resupply(build_slot,12) do
+    while not resupply(build_slot,14) do
         print("Need Building materials in slot ".. build_slot)
         sleep(5)
     end
