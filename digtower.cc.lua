@@ -1,3 +1,21 @@
+-- digtower
+--
+-- This was created to dig/build a tower up in the nether including
+-- It will dig/build a 3by3 inside tower with full replacement of the
+-- outside of the tower with building material provided
+--
+-- It places a spiral of stair_material up the center with a center core
+-- of support material.
+--
+-- It will also attempt to maintain a lava safe environment at all time
+-- during the build
+--
+-- author: jon.schlueter@gmail.com (yazug)
+-- 2013-07-14
+--
+-- version 1.0
+--
+
 local spiral = 0
 local wall_slot = 1
 local stair_slot = 2
@@ -32,7 +50,7 @@ function resupply()
 		refill(support_slot)
 	end
 
-	while 
+	while
 		(turtle.getItemCount(wall_slot) == 0 ) or
 		(turtle.getItemCount(stair_slot) == 0 ) or
 		(turtle.getItemCount(support_slot) == 0 )
@@ -71,7 +89,7 @@ function resupply()
 	end
 end
 
-for h=1,18 do
+for h=1,16 do
 
 	turtle.select(junk_slot)
 	turtle.dig()
@@ -119,7 +137,7 @@ for h=1,18 do
 				else
 					spiral = 11
 				end
-				print("Placed stair next at ".. spiral) 
+				print("Placed stair next at ".. spiral)
 			end
 
 			turtle.turnRight()
@@ -152,3 +170,4 @@ turtle.down()
 turtle.select(support_slot)
 turtle.placeUp()
 turtle.select(wall_slot)
+
