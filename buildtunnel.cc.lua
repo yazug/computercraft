@@ -6,7 +6,7 @@
 -- it will build tunnel_len long tunnel at a time.
 --
 -- Jon.schlueter@gmail.com
--- version 1.0 2013-07-13
+-- version 1.1 2013-07-14
 
 local tunnel_len = 8
 local build_slot = 1
@@ -19,8 +19,28 @@ function checkRefuel()
        turtle.refuel(1)
    end
 end
+
+function resupply(slot,count)
+    if turtle.getItemCount(slot) < count then
+        for check_slot = 1,16 do
+            turtle.select(check_slot)
+            if check_slot ~= build_slot and
+                check_slot ~= window_slot
+            then
+                if turtle.compareTo(slot)
+                then
+                    turtle.transferTo(slot)
+                end
+            end
+        end
+    end
+    print(turtle.getItemCount(slot).." "..count)
+    return turtle.getItemCount(slot) >= count
+end
+
 function goUp()
     while not turtle.up() do
+	turtle.select(junk_slot)
         turtle.digUp()
         checkRefuel()
         sleep(1)
@@ -29,10 +49,21 @@ end
 
 function goDown()
     while not turtle.down() do
+	turtle.select(junk_slot)
         turtle.digDown()
         checkRefuel()
         sleep(1)
     end
+end
+
+function digUp()
+	turtle.select(junk_slot)
+	turtle.digUp()
+end
+
+function digDown()
+	turtle.select(junk_slot)
+	turtle.digDown()
 end
 
 function goBack()
@@ -47,6 +78,7 @@ end
 
 function goForward()
     while not turtle.forward() do
+	turtle.select(junk_slot)
         turtle.dig()
         checkRefuel()
         sleep(1)
@@ -67,61 +99,57 @@ function placeUp(slot)
         turtle.placeUp()
 end
 
-function buildonev2()
+function doPlaceWall(slot)
+	turtle.select(slot)
+	while not turtle.compare() and not turtle.place() do
+		turtle.select(junk_slot)
+		turtle.dig()
+		turtle.select(slot)
+	end
+end
+
+function buildone()
     turtle.turnLeft()
+    -- grab the bottom center block
+    digUp()
     placeDown(build_slot)
     goForward()
     placeDown(build_slot)
     goForward()
     placeDown(build_slot)
     goBack()
-    place(build_slot)
+    doPlaceWall(build_slot)
     goUp()
-    place(window_slot)
+    doPlaceWall(window_slot)
     goUp()
-    place(build_slot)
+    doPlaceWall(build_slot)
     goUp()
-    place(build_slot)
+    doPlaceWall(build_slot)
     goBack()
-    place(build_slot)
+    doPlaceWall(build_slot)
+    -- grab the top center block
+    digDown()
     goBack()
-    place(window_slot)
+    doPlaceWall(window_slot)
     turtle.turnRight()
     turtle.turnRight()
-    place(build_slot)
+    doPlaceWall(build_slot)
     goDown()
     placeUp(build_slot)
-    place(build_slot)
+    doPlaceWall(build_slot)
     goDown()
-    place(window_slot)
+    doPlaceWall(window_slot)
     goDown()
     placeDown(build_slot)
     goForward()
     placeDown(build_slot)
     goBack()
-    place(build_slot)
+    doPlaceWall(build_slot)
     goBack()
     placeDown(build_slot)
     turtle.turnLeft()
 end
  
-function resupply(slot,count)
-    if turtle.getItemCount(slot) < count then
-        for check_slot = 1,16 do
-            turtle.select(check_slot)
-            if check_slot ~= build_slot and
-                check_slot ~= window_slot
-            then
-                if turtle.compareTo(slot)
-                then
-                    turtle.transferTo(slot)
-                end
-            end
-        end
-    end
-    print(turtle.getItemCount(slot).." "..count)
-    return turtle.getItemCount(slot) >= count
-end
  
 print("Solid in slot "..build_slot)
 print("Window stuff in slot "..window_slot)
@@ -137,5 +165,5 @@ for len = 1,tunnel_len do
         sleep(5)
     end
     goForward()
-    buildonev2()
+    buildone()
 end
