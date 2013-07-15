@@ -7,6 +7,9 @@
 --
 -- Jon.schlueter@gmail.com
 -- version 1.1 2013-07-14
+--
+-- buildtunnel posted on turtlescripts.com
+-- market get gjdhl6 buildtunnel y
 
 local tunnel_len = 8
 local build_slot = 1
